@@ -4,6 +4,7 @@ A reusable PyQt5 terminal-style widget
 
 Designed to be embedded inside other PyQt applications as a normal widget.
 
+![Terminal Widget Screenshot](docs/screenshot.png)
 ---
 
 ## 📦 Installation (as Git submodule)
