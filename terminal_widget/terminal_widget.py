@@ -1,14 +1,18 @@
-import time
 from PyQt5 import QtWidgets
 from PyQt5 import uic
 from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QLabel, QWidget, QHBoxLayout, QVBoxLayout, QFrame, QScrollArea, QGroupBox, QLineEdit, QPlainTextEdit
 from PyQt5.QtCore import pyqtSignal
 from pathlib import Path
 
+
+import time
 import serial.tools.list_ports
+import json
+
 
 
 _UI_PATH = Path(__file__).resolve().parent / "ui" / "terminal_ui.ui"
+_CURRENT_DIR = Path(__file__).resolve().parent
 
 class TerminalWidget(QtWidgets.QWidget):
     _filters = []
@@ -48,6 +52,18 @@ class TerminalWidget(QtWidgets.QWidget):
         # Initial population of ports
         self.button_pressed(self.btn_refresh_ports)
 
+        self.settings_path = _CURRENT_DIR / "settings.json"
+        settings_data = {"port": "", "baudrate": 9600}  # default values
+        if self.settings_path.exists():
+            with open(self.settings_path, 'r') as f:
+                settings_data = json.load(f)
+
+        if "port" in settings_data:
+            self.set_port(settings_data["port"])
+        
+        if "baudrate" in settings_data:
+            self.set_baudrate(settings_data["baudrate"])
+
     def get_port(self):
         return self.combobox_ports.currentText()
     
@@ -67,8 +83,7 @@ class TerminalWidget(QtWidgets.QWidget):
 
     def button_pressed(self, arg):
         txt = arg.text()
-
-        print(f"Button pressed: {txt}")
+        # print(f"Button pressed: {txt}")
 
         if txt == "Refresh":
             # Simulate refreshing ports
@@ -80,6 +95,8 @@ class TerminalWidget(QtWidgets.QWidget):
 
         elif txt == "Connect":
             self.connect_pressed.emit()
+            with open(self.settings_path, 'w') as f:
+                json.dump({"port": self.get_port(), "baudrate": self.get_baudrate()}, f)
 
         elif txt == "Send":
             message = self.LE_input.text()
@@ -103,3 +120,4 @@ class TerminalWidget(QtWidgets.QWidget):
 
         if self.chkbx_auto_scroll.isChecked():
             self.textedit_terminal.verticalScrollBar().setValue(self.textedit_terminal.verticalScrollBar().maximum())
+
