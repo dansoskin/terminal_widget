@@ -22,6 +22,9 @@ dist/
 .vscode/
 .idea/
 
+# --- App runtime state (last-used port/baud, written on Connect) ---
+settings.json
+
 # --- OS junk ---
 .DS_Store
 Thumbs.db
