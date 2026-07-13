@@ -115,8 +115,10 @@ class TerminalWidget(QtWidgets.QWidget):
             self.append_text(message, direction="in")
 
     def append_text(self, text, direction="in"):
+        now = time.time()
+        ts = time.strftime("%H:%M:%S", time.localtime(now)) + f".{int((now % 1) * 1000):03d}"
         prefix = ">> " if direction == "out" else "<< "
-        self.textedit_terminal.appendPlainText(prefix + text)
+        self.textedit_terminal.appendPlainText(f"[{ts}] {prefix}{text}")
 
         if self.chkbx_auto_scroll.isChecked():
             self.textedit_terminal.verticalScrollBar().setValue(self.textedit_terminal.verticalScrollBar().maximum())
